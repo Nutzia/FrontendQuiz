@@ -26,6 +26,21 @@ namespace FrontendQuiz.Controllers
 
         public async Task<IActionResult> Questions_JSON()
         {
+            //IEnumerable<CustomerViewModel> model =
+            //    from c in _context.Customer
+            //        .Include(c => c.Person)
+            //    where c.Person.FirstName.ToLower().Contains(keyword)
+            //        ||
+            //        c.Person.LastName.ToLower().Contains(keyword)
+            //    orderby c.Person.LastName
+            //    select new CustomerViewModel()
+            //    {
+            //        Id = c.CustomerId,
+            //        AccountNumber = c.AccountNumber,
+            //        FirstName = c.Person.FirstName,
+            //        LastName = c.Person.LastName
+            //    };
+
             return Json(await _context.Questions.ToListAsync());
         }
 

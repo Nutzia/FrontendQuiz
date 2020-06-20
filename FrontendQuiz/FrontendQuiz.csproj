@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Controllers\QuizController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="webpack.config.js" />
   </ItemGroup>
 
