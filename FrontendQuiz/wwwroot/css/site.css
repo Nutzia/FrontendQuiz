@@ -1,6 +1,10 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+*, *::before, *::after {
+    font-family: Dubai, sans-serif;
+}
+
 a.navbar-brand {
   white-space: normal;
   text-align: center;
@@ -61,6 +65,10 @@ html {
 body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
+  align-items: center;
+  justify-content:center;
+  background: rgb(34,193,195);
+  background: linear-gradient(90deg, rgba(34,193,195,1) 0%, rgba(45,108,253,1) 100%);
 }
 .footer {
   position: absolute;
@@ -68,4 +76,76 @@ body {
   width: 100%;
   white-space: nowrap;
   line-height: 60px; /* Vertically center the text there */
+}
+
+.navbar {
+    opacity: 0.5;
+}
+
+.question-title {
+    color: rgba(0, 0, 0, .8);
+}
+
+.choice-button {
+    margin: 1em;
+    padding: 1em;
+    cursor: pointer;
+    font-size: 2rem;
+    border: 1px solid black;
+    outline: none;
+    background-color: rgba(255, 255, 255, .5);
+    display: grid;
+    grid-template-rows: repeat(2,auto);
+    grid-template-columns: repeat(2,auto);
+    transition: all .07s ease;
+}
+
+.choice-button:hover {
+    background-color: rgba(255, 255, 255, .75);
+}
+
+.choice-button.selected {
+    background-color: rgba(255, 255, 255, 1);
+}
+
+.start-btn,
+.next-btn,
+.retry-btn {
+    margin: 1em;
+    padding: 1em;
+    cursor: pointer;
+    font-size: 2rem;
+    border: 2px solid #2A1E5C;
+    outline: none;
+    background-color: #57B8FF;
+    color: white;
+    transition: all .2s ease-in-out;
+}
+
+.start-btn:hover {
+    transform: scale(1.1);
+}
+
+
+.next-btn:hover {
+    transform: translateX(5px);
+}
+
+.hide {
+    display: none;
+}
+
+.main {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    min-height: 100vh;
+    grid-template-columns: repeat(2, 100px);
+    grid-template-rows: minmax(120px, auto) repeat(3, 100px);
+    width: 800px;
+    max-width: 80%;
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 0 0 10px 2px;
 }

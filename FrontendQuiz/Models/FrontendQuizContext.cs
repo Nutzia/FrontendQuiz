@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using FrontendQuiz.Models;
 
 namespace FrontendQuiz.Models
 {
@@ -63,5 +64,7 @@ namespace FrontendQuiz.Models
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+        public DbSet<FrontendQuiz.Models.QuizViewModel> QuizViewModel { get; set; }
     }
 }

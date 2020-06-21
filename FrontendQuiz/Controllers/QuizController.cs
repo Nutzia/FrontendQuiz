@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using FrontendQuiz.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FrontendQuiz.Controllers
 {
@@ -18,165 +17,42 @@ namespace FrontendQuiz.Controllers
             _context = context;
         }
 
-        // GET: Quiz
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.Questions.ToListAsync());
-        }
-
-        public async Task<IActionResult> Questions_JSON()
-        {
-            //IEnumerable<CustomerViewModel> model =
-            //    from c in _context.Customer
-            //        .Include(c => c.Person)
-            //    where c.Person.FirstName.ToLower().Contains(keyword)
-            //        ||
-            //        c.Person.LastName.ToLower().Contains(keyword)
-            //    orderby c.Person.LastName
-            //    select new CustomerViewModel()
-            //    {
-            //        Id = c.CustomerId,
-            //        AccountNumber = c.AccountNumber,
-            //        FirstName = c.Person.FirstName,
-            //        LastName = c.Person.LastName
-            //    };
-
-            return Json(await _context.Questions.ToListAsync());
-        }
-
-        // Dit is een voorbeeld
-        public async Task<IActionResult> Answers_JSON(int? answers)
-        {
-            // naar db om choices op te halen
-            // answers vergelijken met is correct, per question id
-            // score berekenen
-            // score terug geven via Json(score)
-            return Json(await _context.Questions.ToListAsync());
-        }
-
-        // GET: Quiz/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var questions = await _context.Questions
-                .FirstOrDefaultAsync(m => m.QuestionId == id);
-            if (questions == null)
-            {
-                return NotFound();
-            }
-
-            return View(questions);
-        }
-
-        // GET: Quiz/Create
-        public IActionResult Create()
+        public IActionResult Index()
         {
             return View();
         }
-
-        // POST: Quiz/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("QuestionId,Description")] Questions questions)
+        public IActionResult Questions_JSON()
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(questions);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(questions);
+            IEnumerable<QuizViewModel> model =
+                from q in _context.Questions
+                select new QuizViewModel()
+                {
+                    QuestionID = q.QuestionId,
+                    Description = q.Description,
+                    Choices = q.Choices,
+                };
+
+            return Json(model.ToArray());
         }
 
-        // GET: Quiz/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Answers_JSON(string answers)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            int[] answersArray = answers.Split(',').Select(int.Parse).ToArray();
+            int answerLength = answersArray.Length;
+            int correctAnswers = 0;
 
-            var questions = await _context.Questions.FindAsync(id);
-            if (questions == null)
+            foreach (var choice in _context.Choices)
             {
-                return NotFound();
-            }
-            return View(questions);
-        }
-
-        // POST: Quiz/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("QuestionId,Description")] Questions questions)
-        {
-            if (id != questions.QuestionId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
+                if (answersArray.Contains(choice.ChoiceId))
                 {
-                    _context.Update(questions);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!QuestionsExists(questions.QuestionId))
+                    if (choice.IsCorrect == 1)
                     {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
+                        correctAnswers++;
                     }
                 }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(questions);
-        }
-
-        // GET: Quiz/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
             }
 
-            var questions = await _context.Questions
-                .FirstOrDefaultAsync(m => m.QuestionId == id);
-            if (questions == null)
-            {
-                return NotFound();
-            }
-
-            return View(questions);
-        }
-
-        // POST: Quiz/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var questions = await _context.Questions.FindAsync(id);
-            _context.Questions.Remove(questions);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool QuestionsExists(int id)
-        {
-            return _context.Questions.Any(e => e.QuestionId == id);
+            return Json((correctAnswers * 100) / answerLength);
         }
     }
 }
